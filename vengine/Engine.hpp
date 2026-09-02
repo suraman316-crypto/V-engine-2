@@ -1,6 +1,7 @@
 #pragma once
 
 #include <vengine/Common.hpp>
+#include <vengine/animation/Tween.hpp>
 #include <vengine/assets/AssetDatabase.hpp>
 #include <vengine/audio/Audio.hpp>
 #include <vengine/core/Config.hpp>
@@ -9,8 +10,12 @@
 #include <vengine/input/Input.hpp>
 #include <vengine/physics/Physics.hpp>
 #include <vengine/platform/Platform.hpp>
+#include <vengine/renderer/Camera2D.hpp>
+#include <vengine/renderer/DebugDraw.hpp>
+#include <vengine/renderer/RenderCommand.hpp>
 #include <vengine/renderer/Renderer.hpp>
 #include <vengine/scene/Scene.hpp>
+#include <vengine/scripting/NativeScript.hpp>
 #include <vengine/scripting/Scripting.hpp>
 
 #include <memory>
@@ -49,6 +54,11 @@ public:
     scene::SceneManager&      scene_manager() noexcept { return scene_manager_; }
     core::Config&             config() noexcept { return config_; }
     assets::AssetDatabase&    assets() noexcept { return assets_; }
+    animation::TweenManager&  tweens() noexcept { return tweens_; }
+    renderer::Camera2D&       camera() noexcept { return camera_; }
+    renderer::RenderCommandBuffer& command_buffer() noexcept { return cmd_buf_; }
+    renderer::DebugDraw&     debug_draw() noexcept { return debug_draw_; }
+    math::Rng&                rng() noexcept { return rng_; }
 
     /// Inject platform-supplied implementations. Ownership transfers in.
     void install_renderer(std::unique_ptr<renderer::IRenderer> r);
@@ -59,7 +69,15 @@ public:
     renderer::IRenderer*      renderer() noexcept { return renderer_.get(); }
     physics::IPhysicsWorld*   physics() noexcept { return physics_.get(); }
     audio::IAudioEngine*      audio() noexcept { return audio_.get(); }
-    scripting::IScriptRuntime* scripting() noexcept { return scripting_.get(); }
+    scripting::IScriptRuntime* scripting() noexcept {
+        return scripting_ ? scripting_.get()
+                          : static_cast<scripting::IScriptRuntime*>(native_scripts_.get());
+    }
+    scripting::NativeScriptRuntime* native_scripts() noexcept { return native_scripts_.get(); }
+
+    /// Install the built-in native C++ script runtime (registers it as both
+    /// the IScriptRuntime and a directly-accessible behaviour host).
+    void install_native_scripting();
 
 private:
     bool                                     running_{false};
@@ -68,11 +86,17 @@ private:
     scene::SceneManager                      scene_manager_;
     core::Config                             config_;
     assets::AssetDatabase                    assets_;
+    animation::TweenManager                  tweens_;
+    renderer::Camera2D                       camera_;
+    renderer::RenderCommandBuffer            cmd_buf_;
+    renderer::DebugDraw                      debug_draw_;
+    math::Rng                                rng_{0x5EED1234ull};
 
     std::unique_ptr<renderer::IRenderer>     renderer_;
     std::unique_ptr<physics::IPhysicsWorld>  physics_;
     std::unique_ptr<audio::IAudioEngine>     audio_;
     std::unique_ptr<scripting::IScriptRuntime> scripting_;
+    std::unique_ptr<scripting::NativeScriptRuntime> native_scripts_;
 };
 
 } // namespace vengine

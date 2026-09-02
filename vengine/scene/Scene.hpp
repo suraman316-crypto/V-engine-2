@@ -4,6 +4,7 @@
 #include <vengine/core/Error.hpp>
 #include <vengine/core/Types.hpp>
 #include <vengine/scene/Registry.hpp>
+#include <vengine/scene/Systems.hpp>
 
 #include <functional>
 #include <memory>
@@ -33,31 +34,59 @@ public:
     Registry& registry() noexcept { return registry_; }
     const Registry& registry() const noexcept { return registry_; }
 
+    /// Event bus for this scene (collisions, triggers, game events).
+    EventBus& events() noexcept { return events_; }
+    const EventBus& events() const noexcept { return events_; }
+
     Entity create_entity(std::string name = {}) {
         return registry_.create(std::move(name));
     }
 
     void destroy_entity(Entity e) { registry_.destroy(e); }
 
-    /// Bind a per-frame system. Systems run in registration order; this is
-    /// deterministic and predictable for game devs.
-    using SystemFn = std::function<void(Scene&, float)>;
-    void add_system(SystemFn fn) { systems_.push_back(std::move(fn)); }
+    // ---- systems -----------------------------------------------------------
 
-    void on_create() {}
-    void update(float dt) {
-        for (auto& sys : systems_) sys(*this, dt);
+    /// Bind a per-frame system (Update phase, default priority). Kept for the
+    /// README-style lambda API; prefer attach_system for phase control.
+    using SystemFn = std::function<void(Scene&, float)>;
+    void add_system(SystemFn fn) {
+        scheduler_.attach(std::make_shared<FunctionSystem>(UpdatePhase::Update, 0, std::move(fn)));
     }
+    /// Attach a full system object with phase/priority control.
+    void attach_system(std::shared_ptr<ISystem> sys) { scheduler_.attach(std::move(sys)); }
+
+    void on_create() {
+        scheduler_.on_attach(*this);
+    }
+
+    /// Run the fixed + variable update phases for one frame. The engine calls
+    /// this with the frame dt; fixed-step accumulation is handled by the
+    /// Engine facade so Scene stays simple.
+    void update(float dt) {
+        scheduler_.tick(*this, UpdatePhase::Update, dt);
+        scheduler_.tick(*this, UpdatePhase::LateUpdate, dt);
+    }
+    void fixed_update(float dt) {
+        scheduler_.tick(*this, UpdatePhase::FixedUpdate, dt);
+    }
+    void render() {
+        scheduler_.tick(*this, UpdatePhase::Render, 0.0f);
+    }
+
     void destroy() {
-        systems_.clear();
+        scheduler_.on_detach(*this);
+        scheduler_.clear();
+        events_.clear();
     }
 
     std::size_t entity_count() const noexcept { return registry_.size(); }
+    std::size_t system_count() const noexcept { return scheduler_.count(); }
 
 private:
-    std::string           name_;
-    Registry              registry_;
-    std::vector<SystemFn> systems_;
+    std::string      name_;
+    Registry         registry_;
+    EventBus         events_;
+    SystemScheduler  scheduler_;
 };
 
 /// A simple scene manager: name -> scene, with load/unload semantics. The

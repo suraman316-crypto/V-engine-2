@@ -22,8 +22,10 @@ struct Vec2 {
 
     constexpr Vec2 operator+(const Vec2& o) const noexcept { return {x + o.x, y + o.y}; }
     constexpr Vec2 operator-(const Vec2& o) const noexcept { return {x - o.x, y - o.y}; }
+    constexpr Vec2 operator-() const noexcept { return {-x, -y}; }
     constexpr Vec2 operator*(T s) const noexcept { return {x * s, y * s}; }
     constexpr Vec2 operator/(T s) const noexcept { return {x / s, y / s}; }
+    constexpr Vec2 operator*(const Vec2& o) const noexcept { return {x * o.x, y * o.y}; }
 
     constexpr Vec2& operator+=(const Vec2& o) noexcept { x += o.x; y += o.y; return *this; }
     constexpr Vec2& operator-=(const Vec2& o) noexcept { x -= o.x; y -= o.y; return *this; }
@@ -44,6 +46,11 @@ struct Vec2 {
         T len = length();
         if (len == T{}) return *this;
         return {x / len, y / len};
+    }
+
+    /// Linear interpolation. t in [0,1]; unclamped to allow overshoot tweens.
+    constexpr Vec2 lerp(const Vec2& o, T t) const noexcept {
+        return {x + (o.x - x) * t, y + (o.y - y) * t};
     }
 };
 

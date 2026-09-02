@@ -47,6 +47,8 @@ public:
 
     void emit(math::Vec2f origin, int count);
     void update(float dt);
+    /// Update and emit from a moving origin (e.g. an entity's transform).
+    void update(float dt, math::Vec2f origin);
 
     const std::vector<Particle>& particles() const noexcept { return particles_; }
     std::size_t alive_count() const noexcept;

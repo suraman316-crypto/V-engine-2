@@ -21,6 +21,8 @@ struct Rect {
 
     constexpr Vec2<T> center() const noexcept { return Vec2<T>{x + w / 2, y + h / 2}; }
     constexpr Vec2<T> size()   const noexcept { return Vec2<T>{w, h}; }
+    constexpr T width()  const noexcept { return w; }
+    constexpr T height() const noexcept { return h; }
 
     constexpr bool contains(T px, T py) const noexcept {
         return px >= x && px < x + w && py >= y && py < y + h;
