@@ -1,0 +1,13 @@
+{
+  "preset": "ultra",
+  "target_fps": 120,
+  "msaa": 4,
+  "texture_quality": "ultra",
+  "shadow_quality": "ultra",
+  "postprocess": [
+    "bloom",
+    "color_grading"
+  ],
+  "particle_budget": 2000,
+  "physics_fixed_dt": 0.0166667
+}

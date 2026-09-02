@@ -108,6 +108,20 @@ public:
         return n;
     }
 
+    /// Iterate all live entities.
+    template <typename F>
+    void each(F&& fn) {
+        for (std::uint32_t i = 0; i < meta_.size(); ++i) {
+            if (meta_[i].alive) fn(Entity::make(i, meta_[i].version));
+        }
+    }
+    template <typename F>
+    void each(F&& fn) const {
+        for (std::uint32_t i = 0; i < meta_.size(); ++i) {
+            if (meta_[i].alive) fn(Entity::make(i, meta_[i].version));
+        }
+    }
+
     template <typename T, typename... Args>
     T& add(Entity e, Args&&... args) {
         VENGINE_ASSERT(alive(e), "add component to dead entity");

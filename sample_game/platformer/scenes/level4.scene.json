@@ -1,0 +1,43 @@
+{
+  "name": "PlatformerLevel4",
+  "entities": [
+    {
+      "id": 1,
+      "name": "Player",
+      "components": {
+        "Transform": {
+          "x": 100,
+          "y": 300,
+          "rot": 0,
+          "sx": 1,
+          "sy": 1
+        },
+        "Sprite": {
+          "texture": "sprites/player.png",
+          "layer": 5
+        },
+        "Behaviour": {
+          "script": "PlatformerPlayer"
+        }
+      }
+    },
+    {
+      "id": 2,
+      "name": "Goal",
+      "components": {
+        "Transform": {
+          "x": 1800,
+          "y": 300,
+          "rot": 0,
+          "sx": 1,
+          "sy": 1
+        },
+        "Sprite": {
+          "texture": "sprites/goal.png",
+          "layer": 5
+        }
+      }
+    }
+  ],
+  "tilemap": "../../assets/maps/level_4.tilemap.json"
+}

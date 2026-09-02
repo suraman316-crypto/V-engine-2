@@ -1,0 +1,24 @@
+{
+  "name": "Neon Runner",
+  "version": "1.0.0",
+  "engine_version": "2.0",
+  "target": "android",
+  "min_sdk": 24,
+  "target_sdk": 34,
+  "orientation": "landscape",
+  "resolution": { "width": 1920, "height": 1080 },
+  "physics": {
+    "gravity": { "x": 0.0, "y": -19.62 },
+    "fixed_dt": 0.0166667,
+    "velocity_iterations": 6,
+    "position_iterations": 2
+  },
+  "renderer": {
+    "vsync": true, "target_fps": 60, "msaa": 2,
+    "postprocess": ["bloom", "color_grading"]
+  },
+  "audio": { "sample_rate": 44100, "channels": 2, "master_volume": 1.0 },
+  "input": { "touch": true, "multitouch": true, "virtual_gamepad": false },
+  "scene": "scenes/level1.scene.json",
+  "assets": "../../assets/manifest.json"
+}

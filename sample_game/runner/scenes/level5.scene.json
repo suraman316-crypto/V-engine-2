@@ -1,0 +1,72 @@
+{
+  "name": "RunnerLevel5",
+  "entities": [
+    {
+      "id": 1,
+      "name": "GameManager",
+      "components": {
+        "Behaviour": {
+          "script": "GameManager"
+        }
+      }
+    },
+    {
+      "id": 2,
+      "name": "Runner",
+      "components": {
+        "Transform": {
+          "x": 200,
+          "y": 300,
+          "rot": 0,
+          "sx": 1,
+          "sy": 1
+        },
+        "Sprite": {
+          "texture": "sprites/runner.png",
+          "layer": 5
+        },
+        "Collider": {
+          "shape": "aabb",
+          "w": 32,
+          "h": 48
+        },
+        "Behaviour": {
+          "script": "Runner"
+        }
+      }
+    },
+    {
+      "id": 3,
+      "name": "Ground",
+      "components": {
+        "Transform": {
+          "x": 0,
+          "y": 0,
+          "rot": 0,
+          "sx": 30,
+          "sy": 1
+        },
+        "Sprite": {
+          "texture": "textures/tile_neon_5.png",
+          "layer": 0
+        },
+        "Collider": {
+          "shape": "aabb",
+          "w": 1920,
+          "h": 32,
+          "static": true
+        }
+      }
+    },
+    {
+      "id": 4,
+      "name": "ObstacleSpawner",
+      "components": {
+        "Behaviour": {
+          "script": "ObstacleSpawner",
+          "difficulty": 1.5
+        }
+      }
+    }
+  ]
+}

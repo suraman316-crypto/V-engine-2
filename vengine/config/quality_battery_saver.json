@@ -1,0 +1,10 @@
+{
+  "preset": "battery_saver",
+  "target_fps": 30,
+  "msaa": 0,
+  "texture_quality": "battery_saver",
+  "shadow_quality": "off",
+  "postprocess": [],
+  "particle_budget": 100,
+  "physics_fixed_dt": 0.0166667
+}

@@ -1,0 +1,24 @@
+{
+  "name": "Pixel Run",
+  "version": "1.0.0",
+  "engine_version": "2.0",
+  "target": "android",
+  "min_sdk": 24,
+  "target_sdk": 34,
+  "orientation": "landscape",
+  "resolution": { "width": 1920, "height": 1080 },
+  "physics": {
+    "gravity": { "x": 0.0, "y": -9.81 },
+    "fixed_dt": 0.0166667,
+    "velocity_iterations": 8,
+    "position_iterations": 3
+  },
+  "renderer": {
+    "vsync": true, "target_fps": 60, "msaa": 2,
+    "postprocess": ["color_grading", "vignette"]
+  },
+  "audio": { "sample_rate": 44100, "channels": 2, "master_volume": 1.0 },
+  "input": { "touch": true, "multitouch": true, "virtual_gamepad": true },
+  "scene": "scenes/level1.scene.json",
+  "assets": "../assets/manifest.json"
+}

@@ -1,0 +1,10 @@
+{
+  "preset": "low",
+  "target_fps": 30,
+  "msaa": 0,
+  "texture_quality": "low",
+  "shadow_quality": "off",
+  "postprocess": [],
+  "particle_budget": 200,
+  "physics_fixed_dt": 0.0166667
+}

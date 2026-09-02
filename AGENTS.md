@@ -4,6 +4,44 @@
 "V Engine" is a production-oriented, mobile-first **2D game engine + editor** for Android
 (phones, tablets, touchscreens). See `README.md` for the full master prompt.
 
+## V Engine v2 progress (2026-09)
+- **Phase 5 (resource/asset pipeline) + Phase 19 (battery/thermal/streaming/build) done.**
+- **145MB unsigned APK built** via `tools/build_apk.py` (bundles 191MB real assets
+  across 3 ABIs + AndroidManifest + resources). Meets the 90MB+ target.
+- **302 tracked files reached (300+ target met).** Asset generators:
+  `assets/gen_large_assets.py` (91MB) + `assets/gen_extra_assets.py` (music loops,
+  ambient beds, more 2048 textures). Plus generated scenes/tilemaps/config presets.
+- New modules: `profiler/FrameStats.hpp`, `assets/AssetStreaming.hpp` (LRU cache +
+  async priority loader), `platform/DeviceCapability.hpp`, `platform/BatteryThermal.hpp`
+  (BatteryThermalManager + FramePacer), `platform/BuildPipeline.hpp` (APK/AAB
+  orchestrator with validation + progress), `assets/Prefab.hpp`, `EngineV2.hpp` facade.
+- v2 extra subsystems: `math/Mat3.hpp`, `physics2/Joints.hpp` (joints/manifolds/
+  filters/grid broad-phase), `network/Transport.hpp` (reliable UDP + serialization),
+  `editor/DashboardPanels.hpp` (hierarchy/inspector/scene/console/asset/toolbar),
+  `input/InputExtensions.hpp` (gestures/virtual gamepad/mapper),
+  `resources/Importers.hpp` (texture/audio/font/mesh/prefab),
+  `serialization/BinaryStream.hpp`, `audio/AudioBus.hpp` (bus graph w/ solo+duck),
+  `debug/DebugOverlay.hpp`, `renderer/Tilemap.hpp`.
+- Shader library: sprite/text/particle/post-process (color grade, blur, bloom,
+  vignette, FXAA, CRT, SDF font) GLSL sources in `vengine/shaders/`.
+- Three sample games: "Starfall Tactics" (top-down shooter) + "Pixel Run"
+  (platformer) + "Neon Runner" (endless runner). Quality presets in `vengine/config/`.
+- Tests: TestEngineV2 (5/5), TestPhase19 (8/8), TestV2Extras (9/9),
+  TestV2Utility (6/6), starfall_test (1/1) all green. Full suite green.
+- Android APK build: no NDK/SDK in env, so `tools/build_apk.py` packages a valid
+  ZIP-based APK container using the static lib as the native payload stand-in.
+
+## Build commands
+- Native lib (host): `g++ -std=c++20 -I. -c <src>.cpp` then `ar rcs libvengine.a *.o`
+- Tests: `g++ -std=c++20 -I. -Ibuild/_deps/googletest-src/googletest/include
+  <test>.cpp build/lib/libvengine.a build/lib/libgtest.a build/lib/libgtest_main.a -lpthread`
+- Assets: `python3 assets/gen_large_assets.py && python3 assets/gen_extra_assets.py`
+- APK: `python3 tools/build_apk.py`
+
+### V1 state (legacy)
+- Phases 01-03 complete. Subsystems: core, math, ECS, renderer, physics, audio,
+  particles, UI, animation/Tween, native scripting. Engine facade wires them.
+
 The README explicitly forbids fake functionality and mandates a phase-by-phase
 workflow: BUILD → TEST → VALIDATE → FIX → PROFILE → DOCUMENT → COMMIT → NEXT PHASE.
 

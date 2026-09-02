@@ -1,0 +1,13 @@
+{
+  "preset": "medium",
+  "target_fps": 45,
+  "msaa": 2,
+  "texture_quality": "medium",
+  "shadow_quality": "medium",
+  "postprocess": [
+    "bloom",
+    "color_grading"
+  ],
+  "particle_budget": 500,
+  "physics_fixed_dt": 0.0166667
+}
