@@ -1,0 +1,26 @@
+{
+  "version": "2.0",
+  "assets": {
+    "textures": [
+      "textures/white.png", "textures/black.png", "textures/ui_panel.png",
+      "textures/ui_button.png", "textures/sky_bg.png",
+      "textures/tile_0.png", "textures/tile_1.png", "textures/tile_2.png", "textures/tile_3.png",
+      "textures/parallax_0.png", "textures/parallax_1.png", "textures/parallax_2.png"
+    ],
+    "sprites": [
+      "sprites/player.png", "sprites/enemy.png", "sprites/projectile.png",
+      "sprites/enemy_projectile.png", "sprites/star_pickup.png",
+      "sprites/spark.png", "sprites/planet.png"
+    ],
+    "audio": [
+      "audio/shoot.wav", "audio/explosion.wav", "audio/pickup.wav",
+      "audio/hit.wav", "audio/menu_select.wav", "audio/menu_back.wav",
+      "audio/engine_hum.wav", "audio/win.wav", "audio/lose.wav"
+    ],
+    "fonts": [
+      { "name": "default", "image": "fonts/bitmap_font.png", "metrics": "fonts/bitmap_font.json" }
+    ],
+    "animations": [],
+    "tilemaps": ["scenes/tiles.tilemap.json"]
+  }
+}

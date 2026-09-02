@@ -1,0 +1,42 @@
+{
+  "name": "Main",
+  "entities": [
+    {
+      "id": 1, "name": "GameManager",
+      "components": {
+        "Behaviour": { "script": "GameManager" }
+      }
+    },
+    {
+      "id": 2, "name": "Player",
+      "components": {
+        "Transform": { "x": 100, "y": 540, "rot": 0, "sx": 1, "sy": 1 },
+        "Sprite": { "texture": "sprites/player.png", "layer": 5 },
+        "Collider": { "shape": "circle", "radius": 24 },
+        "Behaviour": { "script": "PlayerController" }
+      }
+    },
+    {
+      "id": 3, "name": "Background",
+      "components": {
+        "Transform": { "x": 0, "y": 0, "rot": 0, "sx": 4, "sy": 4 },
+        "Sprite": { "texture": "textures/sky_bg.png", "layer": -10 },
+        "Parallax": { "factor": 0.1 }
+      }
+    },
+    {
+      "id": 4, "name": "Planet",
+      "components": {
+        "Transform": { "x": 1500, "y": 200, "rot": 0, "sx": 2, "sy": 2 },
+        "Sprite": { "texture": "sprites/planet.png", "layer": -5 },
+        "Parallax": { "factor": 0.3 }
+      }
+    },
+    {
+      "id": 5, "name": "Tilemap",
+      "components": {
+        "TileMap": { "source": "scenes/tiles.tilemap.json" }
+      }
+    }
+  ]
+}
