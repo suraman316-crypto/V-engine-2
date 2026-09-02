@@ -14,7 +14,10 @@
 #include <vengine/input/Input.hpp>
 #include <vengine/platform/Platform.hpp>
 
+#include <android/asset_manager.h>
+#include <android/asset_manager_jni.h>
 #include <android/native_window.h>
+#include <android/native_window_jni.h>
 #include <jni.h>
 
 #include <memory>

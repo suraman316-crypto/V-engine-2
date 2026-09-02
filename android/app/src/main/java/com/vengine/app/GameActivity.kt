@@ -45,7 +45,7 @@ class GameActivity : NativeActivity() {
         surfaceView.holder.addCallback(object : SurfaceHolder.Callback {
             override fun surfaceCreated(h: SurfaceHolder) =
                 nativeOnSurfaceCreated(h.surface)
-            override fun surfaceChanged(h: SurfaceHolder, w: Int, hgt: Int) {}
+            override fun surfaceChanged(h: SurfaceHolder, format: Int, w: Int, hgt: Int) {}
             override fun surfaceDestroyed(h: SurfaceHolder) {}
         })
         setContentView(surfaceView)
