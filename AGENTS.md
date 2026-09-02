@@ -8,20 +8,35 @@ The README explicitly forbids fake functionality and mandates a phase-by-phase
 workflow: BUILD → TEST → VALIDATE → FIX → PROFILE → DOCUMENT → COMMIT → NEXT PHASE.
 
 ## Current state
-- **Phase 01 (Foundation) complete and green.** Platform-independent C++20 core
-  builds cleanly and all 26 tests pass.
+- **Phases 01-03 complete and green. 72/72 host tests pass; Android debug APK built.**
 - The engine directory was renamed `engine/` → `vengine/` so includes use the
   `<vengine/...>` convention. `vengine/Common.hpp` re-exports core type aliases
   (usize, u8, Result, Error, ErrorCode, RecoveryHint, ...) into the `vengine`
   namespace so every module can use them without pulling `core/Types.hpp` directly.
-- Android platform layer scaffolded under `android/` (Gradle project + NDK
-  `CMakeLists.txt` + JNI entry + Kotlin `GameActivity` + manifest). It is NOT
-  compiled in this container (no NDK); only the host core library is.
+- Subsystems implemented: core (logging/assert/config), math (Vec2/Vec3/Color/
+  Mat4/AABB/Easing/Rng), ECS (Registry/Entity/Components/EventBus/Systems),
+  components (Tag/Animator/SpriteAtlas/TextLabel/ParticleEmitter/Hierarchy),
+  renderer (RenderCommand batcher + Camera2D + DebugDraw), physics (impulse
+  solver + AABB broadphase + raycast + triggers), audio mixer (voice tracking,
+  bus mixing, fades, spatialization), particles (shape emitters, deterministic
+  RNG, moving origin), UI (retained-mode tree, anchor layout, hit-test,
+  widgets: button/label/image/slider/toggle/progress/input), animation/Tween
+  (float/Vec2/Color tweens with easing, looping, ping-pong, callbacks),
+  native C++ scripting (ScriptBehaviour + NativeScriptRuntime + registry).
+- Engine facade wires all subsystems: update() drives camera/tweens/scene/
+  native-scripts/physics/scripting/input; render() builds the command buffer
+  from Camera2D, culls, bakes debug-draw shapes, submits to the backend.
+- Android platform layer under `android/`: Gradle 8.7 + AGP 8.5, NDK r26d
+  cross-compile, JNI entry, Kotlin GameActivity (Choreographer-driven).
 
 ## Build environment (this container)
 - Debian 13 (trixie), GCC 14.2 (full C++20), CMake 3.31, Ninja 1.12.
-- No Android SDK/NDK present; APK/AAB builds are scaffolded but not executed here.
-- Core engine builds and runs tests via CMake + GoogleTest (fetched by CMake).
+- Android SDK + NDK installed at `~/android-sdk` (NDK 26.1.10909125 AGP default,
+  plus 26.3.11579264). JDK 21 at `/usr/lib/jvm/java-21-openjdk-amd64`.
+- Host engine: `cmake -S . -B build && cmake --build build && ctest --test-dir build`
+- Android APK: `cd android && JAVA_HOME=/usr/lib/jvm/java-21-openjdk-amd64
+  ANDROID_HOME=$HOME/android-sdk ./gradlew assembleDebug`
+  → `android/app/build/outputs/apk/debug/app-debug.apk`
 
 ## Architecture rules (from README, enforced here)
 - C++20, RAII, smart pointers, move semantics, namespaces, const-correctness.
