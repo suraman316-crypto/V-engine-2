@@ -78,7 +78,7 @@ int main() {
     float l[8] = {0}, r[8] = {0};
     sb.push(l, r, 8);
     (void)sb.read(l, r, 4);
-    audio::Bus bus; bus.name = "master";
+    audio::AudioBus bus; bus.name = "master";
 
     // Skeletal animation
     anim::Skeleton skel;

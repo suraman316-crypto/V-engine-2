@@ -68,4 +68,50 @@ private:
     std::vector<usize> free_list_;
 };
 
+/// A handle-based pool: returns an opaque {index, generation} handle so
+/// callers never hold raw pointers (safe across reallocation). Destroying a
+/// handle bumps its generation so stale handles are detected.
+template <typename T>
+class HandlePool {
+public:
+    struct Handle { std::uint32_t index{kInvalid}; std::uint32_t generation{0}; };
+    static constexpr std::uint32_t kInvalid = 0xFFFFFFFF;
+
+    explicit HandlePool(usize capacity) : slots_(capacity) {
+        for (usize i = 0; i < capacity; ++i) free_.push_back(static_cast<std::uint32_t>(capacity - 1 - i));
+    }
+
+    Handle create(T value = {}) {
+        if (free_.empty()) return {};
+        std::uint32_t idx = free_.back(); free_.pop_back();
+        Slot& s = slots_[idx];
+        s.value = std::move(value);
+        s.alive = true;
+        return {idx, s.generation};
+    }
+
+    T* get(Handle h) {
+        if (h.index >= slots_.size()) return nullptr;
+        Slot& s = slots_[h.index];
+        return (s.alive && s.generation == h.generation) ? &s.value : nullptr;
+    }
+
+    void destroy(Handle h) {
+        if (h.index >= slots_.size()) return;
+        Slot& s = slots_[h.index];
+        if (s.generation != h.generation) return;
+        s.alive = false;
+        ++s.generation;
+        free_.push_back(h.index);
+    }
+
+    usize capacity() const noexcept { return slots_.size(); }
+    usize alive() const noexcept { return slots_.size() - free_.size(); }
+
+private:
+    struct Slot { T value{}; std::uint32_t generation{1}; bool alive{false}; };
+    std::vector<Slot> slots_;
+    std::vector<std::uint32_t> free_;
+};
+
 } // namespace vengine::memory

@@ -93,13 +93,13 @@ struct StreamingBuffer {
 };
 
 /// Audio bus / mixer group hierarchy: Master → Music/SFX/UI sub-buses.
-struct Bus {
+struct AudioBus {
     std::string name;
     float volume{1.0f};
     float pan{0.0f};
     bool muted{false};
     bool solo{false};
-    std::vector<Bus> children;
+    std::vector<AudioBus> children;
 };
 
 } // namespace vengine::audio
