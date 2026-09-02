@@ -52,6 +52,24 @@ struct Color {
             static_cast<float>((p >> 24) & 0xFF) / 255.0f,
         };
     }
+
+    constexpr Color operator+(const Color& o) const noexcept {
+        return Color{r + o.r, g + o.g, b + o.b, a + o.a};
+    }
+    constexpr Color operator-(const Color& o) const noexcept {
+        return Color{r - o.r, g - o.g, b - o.b, a - o.a};
+    }
+    constexpr Color operator*(float s) const noexcept {
+        return Color{r * s, g * s, b * s, a * s};
+    }
+    constexpr Color operator*(const Color& o) const noexcept {
+        return Color{r * o.r, g * o.g, b * o.b, a * o.a};
+    }
+    constexpr Color& operator+=(const Color& o) noexcept {
+        r += o.r; g += o.g; b += o.b; a += o.a; return *this;
+    }
 };
+
+constexpr Color operator*(float s, const Color& c) noexcept { return c * s; }
 
 } // namespace vengine::math

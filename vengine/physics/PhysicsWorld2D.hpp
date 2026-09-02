@@ -55,6 +55,10 @@ struct PhysicsBody {
     float                        restitution{0.0f};
     float                        friction{0.2f};
 
+    // mass properties (used by the joint/constraint solver)
+    float                        mass{1.0f};
+    float                        inertia{0.0f}; ///< angular mass; 0 = static/infinite for non-rotating
+
     bool                         awake{true};
 };
 
