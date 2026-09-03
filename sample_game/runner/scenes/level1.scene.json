@@ -1,0 +1,31 @@
+{
+  "name": "RunnerLevel1",
+  "entities": [
+    { "id": 1, "name": "GameManager", "components": { "Behaviour": { "script": "GameManager" } } },
+    { "id": 2, "name": "Runner", "components": {
+        "Transform": { "x": 200, "y": 300, "rot": 0, "sx": 1, "sy": 1 },
+        "Sprite": { "texture": "sprites/runner.png", "layer": 5 },
+        "Collider": { "shape": "aabb", "w": 32, "h": 48 },
+        "Behaviour": { "script": "Runner" }
+    }},
+    { "id": 3, "name": "Ground", "components": {
+        "Transform": { "x": 0, "y": 0, "rot": 0, "sx": 30, "sy": 1 },
+        "Sprite": { "texture": "textures/tile_neon.png", "layer": 0 },
+        "Collider": { "shape": "aabb", "w": 1920, "h": 32, "static": true }
+    }},
+    { "id": 4, "name": "ObstacleSpawner", "components": {
+        "Transform": { "x": 0, "y": 0, "rot": 0, "sx": 1, "sy": 1 },
+        "Behaviour": { "script": "ObstacleSpawner" }
+    }},
+    { "id": 5, "name": "ParallaxFar", "components": {
+        "Transform": { "x": 0, "y": 500, "rot": 0, "sx": 4, "sy": 1 },
+        "Sprite": { "texture": "textures/parallax_layer_0.png", "layer": 1 },
+        "Behaviour": { "script": "ParallaxLayer" }
+    }},
+    { "id": 6, "name": "ParallaxMid", "components": {
+        "Transform": { "x": 0, "y": 400, "rot": 0, "sx": 4, "sy": 1 },
+        "Sprite": { "texture": "textures/parallax_layer_1.png", "layer": 2 },
+        "Behaviour": { "script": "ParallaxLayer" }
+    }}
+  ]
+}

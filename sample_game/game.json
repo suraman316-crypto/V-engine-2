@@ -1,0 +1,36 @@
+{
+  "name": "Starfall Tactics",
+  "version": "1.0.0",
+  "engine_version": "2.0",
+  "target": "android",
+  "min_sdk": 24,
+  "target_sdk": 34,
+  "orientation": "landscape",
+  "resolution": { "width": 1920, "height": 1080 },
+  "physics": {
+    "gravity": { "x": 0.0, "y": 0.0 },
+    "fixed_dt": 0.0166667,
+    "velocity_iterations": 8,
+    "position_iterations": 3
+  },
+  "renderer": {
+    "vsync": true,
+    "target_fps": 60,
+    "msaa": 4,
+    "postprocess": ["bloom", "color_grading", "vignette"]
+  },
+  "audio": {
+    "sample_rate": 44100,
+    "channels": 2,
+    "master_volume": 1.0,
+    "sfx_volume": 0.8,
+    "music_volume": 0.6
+  },
+  "input": {
+    "touch": true,
+    "multitouch": true,
+    "virtual_gamepad": true
+  },
+  "scene": "scenes/main.scene.json",
+  "assets": "assets/manifest.json"
+}

@@ -1,0 +1,9 @@
+{
+  "image": "bitmap_font.png",
+  "glyph_w": 12,
+  "glyph_h": 12,
+  "cols": 16,
+  "rows": 6,
+  "first_char": 32,
+  "count": 95
+}
