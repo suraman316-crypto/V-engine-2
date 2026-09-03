@@ -1,4 +1,4 @@
-name: Android APK Build & Error Report
+name: Build V Engine APK
 
 on:
 push:
@@ -11,12 +11,9 @@ branches:
 - master
 workflow_dispatch:
 
-permissions:
-contents: read
-
 jobs:
-build:
-name: Build APK and Report Errors
+build-apk:
+name: Build Android APK
 runs-on: ubuntu-24.04
 
 defaults:
@@ -24,15 +21,9 @@ defaults:
     working-directory: android
 
 steps:
-  # --------------------------------------------------
-  # 1. Checkout
-  # --------------------------------------------------
-  - name: Checkout repository
+  - name: Checkout source
     uses: actions/checkout@v4
 
-  # --------------------------------------------------
-  # 2. Java
-  # --------------------------------------------------
   - name: Set up JDK 17
     uses: actions/setup-java@v4
     with:
@@ -40,19 +31,11 @@ steps:
       java-version: '17'
       cache: gradle
 
-  # --------------------------------------------------
-  # 3. Android SDK
-  # --------------------------------------------------
   - name: Set up Android SDK
     uses: android-actions/setup-android@v3
 
-  # --------------------------------------------------
-  # 4. Install required Android tools
-  # --------------------------------------------------
-  - name: Install Android SDK / NDK / CMake
+  - name: Install Android SDK components
     run: |
-      yes | sdkmanager --licenses || true
-
       sdkmanager --install \
         "platform-tools" \
         "platforms;android-34" \
@@ -60,177 +43,35 @@ steps:
         "cmake;3.22.1" \
         "ndk;26.3.11579264"
 
-  # --------------------------------------------------
-  # 5. Print environment information
-  # --------------------------------------------------
-  - name: Environment information
-    run: |
-      echo "===== Java ====="
-      java -version
-
-      echo "===== Gradle ====="
-      ./gradlew --version
-
-      echo "===== Android SDK ====="
-      sdkmanager --list_installed || true
-
-      echo "===== Project files ====="
-      find . -maxdepth 3 -type f \
-        -name "*.gradle" -o -name "*.gradle.kts" -o -name "gradle.properties" \
-        -print
-
-  # --------------------------------------------------
-  # 6. Make Gradle executable
-  # --------------------------------------------------
   - name: Make Gradle executable
     run: chmod +x ./gradlew
 
-  # --------------------------------------------------
-  # 7. Clean build
-  # --------------------------------------------------
-  - name: Clean project
-    run: |
-      ./gradlew clean --stacktrace --info
+  - name: Validate Gradle wrapper
+    run: ./gradlew --version
 
-  # --------------------------------------------------
-  # 8. Build Debug APK
-  # --------------------------------------------------
   - name: Build Debug APK
-    id: debug_build
-    continue-on-error: true
-    run: |
-      set -o pipefail
+    run: ./gradlew assembleDebug --stacktrace
 
-      ./gradlew assembleDebug \
-        --stacktrace \
-        --info \
-        --warning-mode all \
-        2>&1 | tee ../debug-build.log
-
-  # --------------------------------------------------
-  # 9. Build Release APK
-  # --------------------------------------------------
   - name: Build Release APK
-    id: release_build
-    continue-on-error: true
+    run: ./gradlew assembleRelease --stacktrace
+
+  - name: List generated APKs
     run: |
-      set -o pipefail
+      echo "Generated APK files:"
+      find app/build/outputs/apk -type f -name "*.apk" -print
 
-      ./gradlew assembleRelease \
-        --stacktrace \
-        --info \
-        --warning-mode all \
-        2>&1 | tee ../release-build.log
-
-  # --------------------------------------------------
-  # 10. Find APKs
-  # --------------------------------------------------
-  - name: Find generated APKs
-    if: always()
-    run: |
-      echo "===== Generated APK files ====="
-
-      if find . -type f -name "*.apk" | grep -q .; then
-        find . -type f -name "*.apk" -print
-      else
-        echo "NO APK WAS GENERATED"
-      fi
-
-  # --------------------------------------------------
-  # 11. Create error report
-  # --------------------------------------------------
-  - name: Create build error report
-    if: always()
-    working-directory: .
-    run: |
-      echo "========================================" > build-error-report.txt
-      echo "ANDROID APK BUILD ERROR REPORT" >> build-error-report.txt
-      echo "========================================" >> build-error-report.txt
-      echo "" >> build-error-report.txt
-
-      echo "Date:" >> build-error-report.txt
-      date >> build-error-report.txt
-      echo "" >> build-error-report.txt
-
-      echo "Git commit:" >> build-error-report.txt
-      git rev-parse HEAD >> build-error-report.txt
-      echo "" >> build-error-report.txt
-
-      echo "Debug build result:" >> build-error-report.txt
-      echo "${{ steps.debug_build.outcome }}" >> build-error-report.txt
-      echo "" >> build-error-report.txt
-
-      echo "Release build result:" >> build-error-report.txt
-      echo "${{ steps.release_build.outcome }}" >> build-error-report.txt
-      echo "" >> build-error-report.txt
-
-      echo "========================================" >> build-error-report.txt
-      echo "DEBUG BUILD LOG" >> build-error-report.txt
-      echo "========================================" >> build-error-report.txt
-
-      if [ -f debug-build.log ]; then
-        cat debug-build.log >> build-error-report.txt
-      else
-        echo "Debug log was not generated." >> build-error-report.txt
-      fi
-
-      echo "" >> build-error-report.txt
-      echo "========================================" >> build-error-report.txt
-      echo "RELEASE BUILD LOG" >> build-error-report.txt
-      echo "========================================" >> build-error-report.txt
-
-      if [ -f release-build.log ]; then
-        cat release-build.log >> build-error-report.txt
-      else
-        echo "Release log was not generated." >> build-error-report.txt
-      fi
-
-  # --------------------------------------------------
-  # 12. Upload APKs
-  # --------------------------------------------------
   - name: Upload Debug APK
-    if: always()
     uses: actions/upload-artifact@v4
     with:
       name: V-Engine-debug-apk
       path: android/app/build/outputs/apk/debug/*.apk
-      if-no-files-found: warn
+      if-no-files-found: error
       retention-days: 14
 
   - name: Upload Release APK
-    if: always()
     uses: actions/upload-artifact@v4
     with:
       name: V-Engine-release-apk
       path: android/app/build/outputs/apk/release/*.apk
-      if-no-files-found: warn
+      if-no-files-found: error
       retention-days: 14
-
-  # --------------------------------------------------
-  # 13. Upload logs and error report
-  # --------------------------------------------------
-  - name: Upload build logs
-    if: always()
-    uses: actions/upload-artifact@v4
-    with:
-      name: V-Engine-build-error-report
-      path: |
-        build-error-report.txt
-        debug-build.log
-        release-build.log
-      if-no-files-found: warn
-      retention-days: 14
-
-  # --------------------------------------------------
-  # 14. Fail workflow if build failed
-  # --------------------------------------------------
-  - name: Fail if APK build failed
-    if: steps.debug_build.outcome == 'failure' || steps.release_build.outcome == 'failure'
-    run: |
-      echo "========================================"
-      echo "APK BUILD FAILED"
-      echo "========================================"
-      echo ""
-      echo "Download the 'V-Engine-build-error-report' artifact"
-      echo "from GitHub Actions to inspect the full error."
-      exit 1
